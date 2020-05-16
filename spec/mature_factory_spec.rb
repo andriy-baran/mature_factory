@@ -1,5 +1,10 @@
 RSpec.describe MatureFactory do
   vars do
+    other_class! do
+      Class.new do
+        include MatureFactory[:components]
+      end
+    end
     operation_class do
       Class.new do
         include MatureFactory[:controllers]
@@ -83,7 +88,7 @@ RSpec.describe MatureFactory do
     it 'overrides components' do
       operation = child_operation_class.test_instance(JSON.dump(value))
       expect(operation.call).to eq(value.merge(child: true))
-      expect(child_operation_class.included_modules).to include(MatureFactory.registered_modules.first)
+      expect(child_operation_class.included_modules).to include(MatureFactory.registered_modules.last)
     end
   end
 
@@ -109,7 +114,7 @@ RSpec.describe MatureFactory do
     it 'overrides components' do
       operation = child_of_child_operation_class.test_instance(JSON.dump(value))
       expect(operation.call).to eq(value.merge(child: true))
-      expect(child_of_child_operation_class.included_modules).to include(MatureFactory.registered_modules.first)
+      expect(child_of_child_operation_class.included_modules).to include(MatureFactory.registered_modules.last)
     end
   end
 
@@ -129,7 +134,7 @@ RSpec.describe MatureFactory do
       operation = child_operation_class.test_instance(JSON.dump(value))
       expect(operation.format).to eq('json')
       expect(operation.call).to eq(OpenStruct.new.call)
-      expect(child_operation_class.included_modules).to include(MatureFactory.registered_modules.first)
+      expect(child_operation_class.included_modules).to include(MatureFactory.registered_modules.last)
     end
   end
 end

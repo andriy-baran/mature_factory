@@ -12,7 +12,7 @@ module MatureFactory
     end
 
     def __mf_included_composite_modules__
-      MatureFactory.registered_modules
+      MatureFactory.registered_modules & included_modules
     end
 
     def __mf_inheritance_store_parent_components_of_composite__(composite)
