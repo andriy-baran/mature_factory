@@ -1,7 +1,7 @@
 module MatureFactory
 	module InheritanceHelpers
     def inherited(subclass)
-      subclass.__mf_inheritance_reactivate_composites__
+      subclass.send(:__mf_inheritance_reactivate_composites__)
     end
 
     def __mf_inheritance_reactivate_composites__

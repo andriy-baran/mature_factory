@@ -14,8 +14,14 @@ module MatureFactory
       end
 
       def extended(receiver)
-        receiver.extend MatureFactory::DecorationHelpers
+        receiver.extend MatureFactory::SubclassingHelpers
         receiver.extend MatureFactory::InheritanceHelpers
+        receiver.private_class_method :__mf_composite_define_init__
+        receiver.private_class_method :__mf_composite_patch_class__
+        receiver.private_class_method :__mf_composite_check_inheritance__!
+        receiver.private_class_method :__mf_inheritance_store_parent_components_of_composite__
+        receiver.private_class_method :__mf_inheritance_activate_parent_components_of_composite__
+        receiver.private_class_method :__mf_inheritance_reactivate_composites__
       end
 
       def __mf_registry_method_name__(title = components_name)

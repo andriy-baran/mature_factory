@@ -1,5 +1,5 @@
 module MatureFactory
-	module DecorationHelpers
+	module SubclassingHelpers
     def __mf_composite_define_init__(klass, &init)
       return klass unless block_given?
       klass.singleton_class.send(:define_method, :__mf_init__, &init)
