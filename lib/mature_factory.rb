@@ -11,6 +11,18 @@ require 'mature_factory/version'
 module MatureFactory
   class Error < StandardError; end
 
+  module ClassMethods
+    def composed_of(*components_names)
+      components_names.each do |components_name|
+        include MatureFactory::Composite[components_name]
+      end
+    end
+  end
+
+  def self.included(receiver)
+    receiver.extend ClassMethods
+  end
+
   def self.inflector
     @inflector ||= Dry::Inflector.new
   end
