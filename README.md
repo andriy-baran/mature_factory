@@ -1,8 +1,6 @@
 # MatureFactory
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/mature_factory`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+It's common situation that you need quickly prototype small library or create a complex stub-object for your test, but you don't want to write primitive code samples or create a bunch of classes. This gem solves the problem
 
 ## Installation
 
@@ -22,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+[Gitbook docs](https://app.gitbook.com/@andriy-baran-v/s/mature-factory/)
 
 ## Development
 
