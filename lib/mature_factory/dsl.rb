@@ -4,14 +4,14 @@ module MatureFactory
 	    mod = self
 	    define_method(:"#{mod.__mf_store_method_name__}") do |method_name, klass|
 	      send(:"#{mod.__mf_component_class_reader__(method_name)}=", klass)
-	      public_send(:"#{mod.components_name}")[method_name] = klass
+	      public_send(:"#{mod.__mf_registry_method_name__}")[method_name] = klass
 	    end
 	  end
 
 	  def define_component_activation_method
 	    mod = self
 	    define_method(:"__mf_activate_#{mod.component_name}_component__") do |method_name, base_class, klass, init = nil, &block|
-	      component_class = public_send(:"#{mod.components_name}")[method_name] # inherited
+	      component_class = public_send(:"#{mod.__mf_registry_method_name__}")[method_name] # inherited
 	      raise(ArgumentError, 'please provide a block or class') if component_class.nil? && klass.nil? && block.nil?
 
 	      target_class = component_class || klass || base_class
@@ -58,8 +58,8 @@ module MatureFactory
 	  def define_components_registry
 	    mod = self
 	    module_eval <<-METHOD, __FILE__, __LINE__ + 1
-	      def #{mod.components_name}
-	        @#{mod.components_name} ||= {}
+	      def #{mod.__mf_registry_method_name__}
+	        @#{mod.__mf_registry_method_name__} ||= {}
 	      end
 	    METHOD
 	  end

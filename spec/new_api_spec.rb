@@ -9,6 +9,6 @@ RSpec.describe MatureFactory do
     end
   end
 
-  it { expect(target).to respond_to(:inputs) }
-  it { expect(target).to respond_to(:outputs) }
+  it { expect(target).to respond_to(:mf_inputs) }
+  it { expect(target).to respond_to(:mf_outputs) }
 end

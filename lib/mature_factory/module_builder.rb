@@ -18,6 +18,10 @@ module MatureFactory
         receiver.extend MatureFactory::InheritanceHelpers
       end
 
+      def __mf_registry_method_name__(title = components_name)
+        :"mf_#{title}"
+      end
+
       def __mf_store_method_name__(title = component_name)
         :"__mf_store_#{title}_class__"
       end
