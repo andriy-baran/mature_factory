@@ -49,7 +49,7 @@ module MatureFactory
 	        private :"#{mod.__mf_component_class_reader__(method_name)}="
 	      end
 	      __mf_composite_define_init__(base_class, &init)
-	      send(:"#{mod.__mf_component_class_reader__(method_name)}=", base_class)
+	      public_send(mod.__mf_store_method_name__, method_name, base_class)
 	      mod.define_component_configure_method(method_name)
 	      mod.define_component_new_instance_method(method_name)
 	    end
