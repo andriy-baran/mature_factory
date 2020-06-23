@@ -52,13 +52,13 @@ RSpec.describe MatureFactory do
   describe '.assemble_*_struct' do
     it 'returns resulted objects composition' do
       res = target.assemble_main_struct
-      expect(res).to_not respond_to(:ten)
+      expect(res).to respond_to(:ten)
       expect(res).to respond_to(:three)
       expect(res).to respond_to(:four)
       expect(res).to respond_to(:one)
       expect(res).to respond_to(:zero)
       expect(res).to respond_to(:two)
-      expect(res).to be_an_instance_of(target.ten_output_class)
+      expect(res.ten).to be_an_instance_of(target.ten_output_class)
       expect(res.zero).to be_an_instance_of(target.zero_input_class)
       expect(res.three).to be_an_instance_of(target.three_step_class)
       expect(res.four).to be_an_instance_of(target.four_step_class)
@@ -138,13 +138,13 @@ RSpec.describe MatureFactory do
         obj = OpenStruct.new(h: 'h')
         res = child_of_child.assemble_main_struct(:init, obj)
 
-        expect(res).to_not respond_to(:ten)
+        expect(res).to respond_to(:ten)
         expect(res).to respond_to(:three)
         expect(res).to respond_to(:four)
         expect(res).to respond_to(:one)
         expect(res).to respond_to(:zero)
         expect(res).to respond_to(:two)
-        expect(res).to be_an_instance_of(child.ten_output_class)
+        expect(res.ten).to be_an_instance_of(child.ten_output_class)
         expect(res.zero).to be_an_instance_of(target.zero_input_class)
         expect(res.three).to be_an_instance_of(target.three_step_class)
         expect(res.four).to be_an_instance_of(target.four_step_class)
