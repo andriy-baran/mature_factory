@@ -39,7 +39,7 @@ RSpec.describe MatureFactory do
         ten_output do
           def f; 'f'; end
         end
-        main_wrap_struct do
+        main_wrapped_struct do
           def res; 'res'; end
         end
       end
@@ -152,7 +152,7 @@ RSpec.describe MatureFactory do
       end
       child_of_child do
         Class.new(child) do
-          main_wrap_struct do
+          main_wrapped_struct do
             def to_s
               'main2'
             end

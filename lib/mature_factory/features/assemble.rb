@@ -11,28 +11,28 @@ module MatureFactory
         end
 
         def self.extended(receiver)
-          receiver.composed_of :flat_structs, :wrap_structs, :nest_structs
+          receiver.composed_of :flatten_structs, :wrapped_structs, :nested_structs
           receiver.extend Helpers
           receiver.private_class_method :__mf_assembler_execute_and_trace__
           receiver.private_class_method :__mf_assembler_define_struct_assemble_method__
         end
 
-        def wrap(title, base_class: Class.new, delegate: false, &block)
+        def wrap(title, base_class: Class.new, init: -> (klass) { klass.new }, delegate: false, &block)
           log = __mf_assembler_execute_and_trace__(order: :direct, &block)
-          wrap_struct(title, base_class: base_class)
-          __mf_assembler_define_struct_assemble_method__(title, log, :wrap, delegate)
+          wrapped_struct(title, base_class: base_class, init: init)
+          __mf_assembler_define_struct_assemble_method__(title, log, :wrapped, delegate)
         end
 
-        def nest(title, base_class: Class.new, delegate: false, &block)
+        def nest(title, base_class: Class.new, init: -> (klass) { klass.new }, delegate: false, &block)
           log = __mf_assembler_execute_and_trace__(order: :reverse, &block)
-          nest_struct(title, base_class: base_class)
-          __mf_assembler_define_struct_assemble_method__(title, log, :nest, delegate)
+          nested_struct(title, base_class: base_class, init: init)
+          __mf_assembler_define_struct_assemble_method__(title, log, :nested, delegate)
         end
 
-        def flat(title, base_class: Class.new, &block)
+        def flat(title, base_class: Class.new, init: -> (klass) { klass.new }, &block)
           log = __mf_assembler_execute_and_trace__(&block)
-          flat_struct(title, base_class: base_class)
-          __mf_assembler_define_struct_assemble_method__(title, log, :flat, nil)
+          flatten_struct(title, base_class: base_class, init: init)
+          __mf_assembler_define_struct_assemble_method__(title, log, :flatten, nil)
         end
       end
 

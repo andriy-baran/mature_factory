@@ -39,7 +39,7 @@ RSpec.describe MatureFactory do
         ten_output do
           def f; 'f'; end
         end
-        main_flat_struct do
+        main_flatten_struct do
           def res; 'res'; end
         end
       end
@@ -55,7 +55,7 @@ RSpec.describe MatureFactory do
   it { expect(target).to respond_to(:four_stage_class) }
   it { expect(target).to respond_to(:zero_input_class) }
   it { expect(target).to respond_to(:ten_output_class) }
-  it { expect(target).to respond_to(:main_flat_struct_class) }
+  it { expect(target).to respond_to(:main_flatten_struct_class) }
   it { expect(target).to respond_to(:assemble_main_struct) }
 
   describe '.assemble_*_struct' do
@@ -67,7 +67,7 @@ RSpec.describe MatureFactory do
       expect(res).to respond_to(:one)
       expect(res).to respond_to(:zero)
       expect(res).to respond_to(:two)
-      expect(res).to be_an_instance_of(target.main_flat_struct_class)
+      expect(res).to be_an_instance_of(target.main_flatten_struct_class)
       expect(res.ten).to be_an_instance_of(target.ten_output_class)
       expect(res.three).to be_an_instance_of(target.three_stage_class)
       expect(res.four).to be_an_instance_of(target.four_stage_class)
@@ -125,7 +125,7 @@ RSpec.describe MatureFactory do
       end
       child_of_child do
         Class.new(child) do
-          main_flat_struct do
+          main_flatten_struct do
             def to_s
               'main2'
             end

@@ -40,6 +40,9 @@ module MatureFactory
           def observer_class; end
           def observer; end
           def result_class; end
+          def result_object
+            result_class.__mf_init__(result_class)
+          end
 
           def call(&on_create_proc)
             log.each do |step, component_name|
@@ -50,7 +53,7 @@ module MatureFactory
               break if proxy.halt?
               observer.on_new_object(step, proxy.object)
             end
-            observer.on_new_object(observer.previous_step, result_class.new)
+            observer.on_new_object(observer.previous_step, result_object)
             observer.current_object
           end
         end
@@ -89,7 +92,7 @@ module MatureFactory
           end
 
           def result_object
-            result_class.new.tap do |result|
+            super.tap do |result|
               result.send(:"#{previous_step}=", current_object) if current_object
             end
           end
