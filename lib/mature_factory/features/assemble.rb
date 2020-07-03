@@ -11,24 +11,28 @@ module MatureFactory
         end
 
         def self.extended(receiver)
+          receiver.composed_of :flat_structs, :wrap_structs, :nest_structs
           receiver.extend Helpers
           receiver.private_class_method :__mf_assembler_execute_and_trace__
           receiver.private_class_method :__mf_assembler_define_struct_assemble_method__
         end
 
-        def wrap(title, break_if: nil, delegate: false, &block)
+        def wrap(title, base_class: Class.new, delegate: false, &block)
           log = __mf_assembler_execute_and_trace__(order: :direct, &block)
-          __mf_assembler_define_struct_assemble_method__(title, log, break_if, delegate)
+          wrap_struct(title, base_class: base_class)
+          __mf_assembler_define_struct_assemble_method__(title, log, :wrap, delegate)
         end
 
-        def nest(title, break_if: nil, delegate: false, &block)
+        def nest(title, base_class: Class.new, delegate: false, &block)
           log = __mf_assembler_execute_and_trace__(order: :reverse, &block)
-          __mf_assembler_define_struct_assemble_method__(title, log, break_if, delegate)
+          nest_struct(title, base_class: base_class)
+          __mf_assembler_define_struct_assemble_method__(title, log, :nest, delegate)
         end
 
-        def flat(title, break_if: nil, &block)
+        def flat(title, base_class: Class.new, &block)
           log = __mf_assembler_execute_and_trace__(&block)
-          __mf_assembler_define_struct_assemble_method__(title, log, break_if, nil)
+          flat_struct(title, base_class: base_class)
+          __mf_assembler_define_struct_assemble_method__(title, log, :flat, nil)
         end
       end
 

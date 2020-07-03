@@ -7,7 +7,7 @@ RSpec.describe MatureFactory do
 
         composed_of :inputs, :outputs, :steps
 
-        wrap :main, delegate: true do
+        wrap :main, delegate: true, base_class: Class.new {def to_s; 'main'; end} do
           input :zero, init: -> (klass, x = 1, y = 2) { klass.new(x, y) }
           step :four
           step :one
@@ -38,6 +38,9 @@ RSpec.describe MatureFactory do
         end
         ten_output do
           def f; 'f'; end
+        end
+        main_wrap_struct do
+          def res; 'res'; end
         end
       end
     end
@@ -111,11 +114,13 @@ RSpec.describe MatureFactory do
       expect(res.d).to eq 'd'
       expect(res.e).to eq 'e'
       expect(res.f).to eq 'f'
+      expect(res.res).to eq 'res'
+      expect(res.to_s).to eq 'main'
     end
 
     context 'when break proc and after creation proc provided' do
       it 'returns enumerator with created objects' do
-        res = target.assemble_main_struct break_if: ->(t,o) { t == :one } do |c|
+        res = target.assemble_main_struct do |c|
                 if c.title == :four
                   c.after_create do |o|
                     o.singleton_class.send(:define_method, :g) { 'g' }
@@ -146,7 +151,13 @@ RSpec.describe MatureFactory do
         end
       end
       child_of_child do
-        Class.new(child)
+        Class.new(child) do
+          main_wrap_struct do
+            def to_s
+              'main2'
+            end
+          end
+        end
       end
     end
 
@@ -204,6 +215,8 @@ RSpec.describe MatureFactory do
         obj = OpenStruct.new(h: 'h')
         res = child_of_child.assemble_main_struct(:init, obj)
 
+        expect(res.x).to eq 1
+        expect(res.y).to eq 2
         expect(res.a).to eq 'a'
         expect(res.b).to eq 'b'
         expect(res.c).to eq 'c'
@@ -211,18 +224,25 @@ RSpec.describe MatureFactory do
         expect(res.e).to eq 'e'
         expect(res.f).to eq 'g'
         expect(res.h).to eq 'h'
+        expect(res.res).to eq 'res'
+        expect(res.to_s).to eq 'main2'
       end
 
       context 'when break proc and after creation proc provided' do
         it 'returns enumerator with created objects' do
-          res = child_of_child.assemble_main_struct break_if: ->(t,o) { t == :one } do |c|
+          res = child_of_child.assemble_main_struct do |c|
                   if c.title == :four
                     c.after_create do |o|
                       o.singleton_class.send(:define_method, :g) { 'g' }
                     end
                   end
+                  if c.title == :zero
+                    c.init_with = [3, 4]
+                  end
                   c.halt! if c.title == :one
                 end
+          expect(res.x).to eq 3
+          expect(res.y).to eq 4
           expect(res).to_not respond_to(:two)
           expect(res).to_not respond_to(:three)
           expect(res).to_not respond_to(:ten)

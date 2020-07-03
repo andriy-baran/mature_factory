@@ -39,8 +39,8 @@ module MatureFactory
           end
         end
 
-        def __mf_assembler_define_struct_assemble_method__(title, log, break_if, delegate)
-          singleton_class.send(:define_method, :"assemble_#{title}_struct") do |previous_step = nil, current_object = nil, break_if: break_if, &on_create|
+        def __mf_assembler_define_struct_assemble_method__(title, log, type, delegate)
+          singleton_class.send(:define_method, :"assemble_#{title}_struct") do |previous_step = nil, current_object = nil, &on_create|
             raise(ArgumentError, 'Both arguments required') if previous_step.nil? ^ current_object.nil?
             proxy_class = Class.new(self) { include PROXY_MODULE }
             BUILDER_CLASS.call(binding, &on_create)

@@ -35,7 +35,7 @@ RSpec.describe MatureFactory do
     expect(res.one.eight.seven.three).to be_an_instance_of(target.three_part_class)
     expect(res.two).to be_a(Object)
     expect(res.two.four).to be_an_instance_of(target.four_part_class)
-    expect(res.two.four.five).to be_a(Struct)
+    expect(res.two.four.five).to be_an_instance_of(target.five_flat_struct_class)
     expect(res.two.four.five.six).to be_an_instance_of(target.six_part_class)
     expect(res.ten).to be_an_instance_of(target.ten_output_class)
   end

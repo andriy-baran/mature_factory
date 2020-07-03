@@ -3,7 +3,7 @@ module MatureFactory
     module Assemble
       module Builder
         DECORATION_ARTIFACTS_NAMES =
-          %i(log proxy_class previous_step current_object delegate)
+          %i(log title type proxy_class previous_step current_object delegate)
 
         def self.call(context, &on_create_proc)
           strategy = nil
@@ -19,6 +19,8 @@ module MatureFactory
         def self.extract_values(context)
           {
             log: context.log,
+            title: context.title,
+            type: context.type,
             proxy_class: context.proxy_class,
             previous_step: context.previous_step,
             current_object: context.current_object,
@@ -55,7 +57,7 @@ module MatureFactory
 
         class DecorationComposition < CompositionBuilder
           def result_class
-            Object
+            proxy_class.superclass.public_send(:"#{title}_#{type}_struct_class")
           end
 
           def observer_class
@@ -68,12 +70,11 @@ module MatureFactory
         end
 
         class FlatComposition < CompositionBuilder
-          def attrs_list
-            log.keys.unshift(previous_step).compact
-          end
-
           def result_class
-            Class.new(Struct.new(*attrs_list))
+            attrs_list = log.keys.unshift(previous_step).compact
+            base_class = proxy_class.superclass.public_send(:"#{title}_#{type}_struct_class")
+            base_class.class_eval { attr_accessor *attrs_list }
+            base_class
           end
 
           def observer_class
@@ -88,7 +89,9 @@ module MatureFactory
           end
 
           def result_object
-            result_class.new(current_object)
+            result_class.new.tap do |result|
+              result.send(:"#{previous_step}=", current_object) if current_object
+            end
           end
 
           def observer
