@@ -8,7 +8,7 @@ RSpec.describe MatureFactory do
         composed_of :inputs, :outputs, :stages
 
         flat :main do
-          input :zero
+          input :zero, init: -> (klass, x = 1, y = 2) { klass.new(x, y) }
           stage :four
           stage :one
           stage :two
@@ -17,6 +17,11 @@ RSpec.describe MatureFactory do
         end
 
         zero_input do
+          attr_reader :x, :y
+          def initialize(x,y)
+            @x = x
+            @y = y
+          end
           def a; 'a'; end
         end
         four_stage do
@@ -69,6 +74,8 @@ RSpec.describe MatureFactory do
     it 'patches original classes' do
       res = target.assemble_main_struct
       expect(res.zero.a).to eq 'a'
+      expect(res.zero.x).to eq 1
+      expect(res.zero.y).to eq 2
       expect(res.four.b).to eq 'b'
       expect(res.one.c).to eq 'c'
       expect(res.two.d).to eq 'd'
@@ -78,9 +85,19 @@ RSpec.describe MatureFactory do
 
     context 'when break proc and after creation proc provided' do
       it 'returns enumerator with created objects' do
-        res = target.assemble_main_struct break_if: ->(t,o) { t == :one } do |t, o|
-          o.singleton_class.send(:define_method, :g) { 'g' } if t == :four
-        end
+        res = target.assemble_main_struct do |c|
+                if c.title == :four
+                  c.after_create do |o|
+                    o.singleton_class.send(:define_method, :g) { 'g' }
+                  end
+                end
+                if c.title == :zero
+                  c.init_with = [3, 4]
+                end
+                c.halt! if c.title == :one
+              end
+        expect(res.zero.x).to eq 3
+        expect(res.zero.y).to eq 4
         expect(res.two).to be_nil
         expect(res.three).to be_nil
         expect(res.ten).to be_nil
@@ -139,9 +156,14 @@ RSpec.describe MatureFactory do
 
       context 'when break proc and after creation proc provided' do
         it 'returns enumerator with created objects' do
-          res = child_of_child.assemble_main_struct break_if: ->(t,o) { t == :one } do |t, o|
-            o.singleton_class.send(:define_method, :g) { 'g' } if t == :four
-          end
+          res = child_of_child.assemble_main_struct do |c|
+                  if c.title == :four
+                    c.after_create do |o|
+                      o.singleton_class.send(:define_method, :g) { 'g' }
+                    end
+                  end
+                  c.halt! if c.title == :one
+                end
           expect(res.two).to be_nil
           expect(res.three).to be_nil
           expect(res.ten).to be_nil

@@ -2,7 +2,8 @@ module MatureFactory
   module Features
     module Assemble
       module Helpers
-        ASSEMBLER = MatureFactory::Features::Assemble::CompositionAssembler
+        BUILDER_CLASS = MatureFactory::Features::Assemble::Builder
+        PROXY_MODULE = MatureFactory::Features::Assemble::Proxy
 
         class Tracer
           attr_reader :log
@@ -14,8 +15,6 @@ module MatureFactory
             @log[attrs.first] = method_name
           end
         end
-
-        private
 
         def __mf_assembler_new_instance__(component_name, step, *attrs)
           mod = included_modules.detect {|m| m.respond_to?(:component_name) && m.component_name == component_name.to_s }
@@ -40,23 +39,11 @@ module MatureFactory
           end
         end
 
-        def __mf_assembler_define_flat_struct_assemble_method__(title = log.to_a.first.first, log, break_if)
-          title = log.to_h.keys.first if title.nil?
-          singleton_class.send(:define_method, :"assemble_#{title}_struct") do |previous_step = nil, current_object = nil, break_if: break_if, &after_create|
+        def __mf_assembler_define_struct_assemble_method__(title, log, break_if, delegate)
+          singleton_class.send(:define_method, :"assemble_#{title}_struct") do |previous_step = nil, current_object = nil, break_if: break_if, &on_create|
             raise(ArgumentError, 'Both arguments required') if previous_step.nil? ^ current_object.nil?
-            ASSEMBLER.call(binding) do |component_name, step|
-              __mf_assembler_new_instance__(component_name, step)
-            end
-          end
-        end
-
-        def __mf_assembler_define_layered_struct_assemble_method__(title = nil, log, break_if, delegate)
-          title = log.to_h.keys.first if title.nil?
-          singleton_class.send(:define_method, :"assemble_#{title}_struct") do |previous_step = nil, current_object = nil, break_if: break_if, &after_create|
-            raise(ArgumentError, 'Both arguments required') if previous_step.nil? ^ current_object.nil?
-            ASSEMBLER.call(binding) do |component_name, step|
-              __mf_assembler_new_instance__(component_name, step)
-            end
+            proxy_class = Class.new(self) { include PROXY_MODULE }
+            BUILDER_CLASS.call(binding, &on_create)
           end
         end
       end
