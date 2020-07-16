@@ -50,8 +50,8 @@ module MatureFactory
               on_create_proc.call(proxy) if block_given?
               proxy.send(:create_object)
               proxy.after_create
-              break if proxy.halt?
               observer.on_new_object(step, proxy.object)
+              break if proxy.halt?
             end
             observer.on_new_object(observer.previous_step, result_object)
             observer.current_object

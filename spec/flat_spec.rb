@@ -108,7 +108,7 @@ RSpec.describe MatureFactory do
         expect(res.two).to be_nil
         expect(res.three).to be_nil
         expect(res.ten).to be_nil
-        expect(res.one).to be_nil
+        expect(res.one.c).to eq 'c'
         expect(res.four.g).to eq 'g'
       end
     end
@@ -189,7 +189,7 @@ RSpec.describe MatureFactory do
           expect(res.two).to be_nil
           expect(res.three).to be_nil
           expect(res.ten).to be_nil
-          expect(res.one).to be_nil
+          expect(res.one.c).to eq 'c'
           expect(res.four.g).to eq 'g'
         end
       end
