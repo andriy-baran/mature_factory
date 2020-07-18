@@ -48,10 +48,11 @@ module MatureFactory
             log.each do |step, component_name|
               proxy = proxy_class.new(step, component_name)
               on_create_proc.call(proxy) if block_given?
+              break if proxy.halt? && type != :flatten
               proxy.send(:create_object)
               proxy.after_create
               observer.on_new_object(step, proxy.object)
-              break if proxy.halt?
+              break if proxy.halt? && type == :flatten
             end
             observer.on_new_object(observer.previous_step, result_object)
             observer.current_object
@@ -83,11 +84,11 @@ module MatureFactory
           def observer_class
             Class.new(SimpleDelegator) do
               attr_reader :previous_step
+              alias_method :current_object, :__getobj__
               def on_new_object(accessor, object)
                 return if accessor.nil?
-                __getobj__.public_send(:"#{accessor}=", object)
+                current_object.public_send(:"#{accessor}=", object)
               end
-              alias_method :current_object, :__getobj__
             end
           end
 
