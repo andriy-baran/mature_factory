@@ -1,5 +1,5 @@
 require 'bundler/setup'
-require 'pry'
+require 'pry-byebug'
 require 'json'
 require 'rspec_vars_helper'
 require 'mature_factory'
