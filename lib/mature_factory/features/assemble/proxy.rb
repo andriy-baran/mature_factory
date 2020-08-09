@@ -28,7 +28,7 @@ module MatureFactory
         private
 
         def create_object
-          @object = self.class.__mf_assembler_new_instance__(@component_name, @title, *init_with)
+          @object = self.class.superclass.__mf_assembler_new_instance__(@component_name, @title, *init_with)
         end
       end
     end

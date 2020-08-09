@@ -18,6 +18,16 @@ RSpec.describe MatureFactory do
             part :four
             flat :five do
               part :six
+              flat :nine do
+                wrap :eleven do
+                  part :twelve
+                  stage :thirteen
+                end
+                nest :fourteen do
+                  part :fifteen
+                  stage :sixteen
+                end
+              end
             end
           end
           output :ten
@@ -58,6 +68,13 @@ RSpec.describe MatureFactory do
     expect(res.two.four).to be_an_instance_of(target.four_part_class)
     expect(res.two.four.five).to be_an_instance_of(target.five_flatten_struct_class)
     expect(res.two.four.five.six).to be_an_instance_of(target.six_part_class)
+    expect(res.two.four.five.nine).to be_an_instance_of(target.nine_flatten_struct_class)
+    expect(res.two.four.five.nine.eleven).to be_an_instance_of(target.eleven_wrapped_struct_class)
+    expect(res.two.four.five.nine.eleven.thirteen.twelve).to be_an_instance_of(target.twelve_part_class)
+    expect(res.two.four.five.nine.eleven.thirteen).to be_an_instance_of(target.thirteen_stage_class)
+    expect(res.two.four.five.nine.fourteen).to be_an_instance_of(target.fourteen_nested_struct_class)
+    expect(res.two.four.five.nine.fourteen.fifteen).to be_an_instance_of(target.fifteen_part_class)
+    expect(res.two.four.five.nine.fourteen.fifteen.sixteen).to be_an_instance_of(target.sixteen_stage_class)
     expect(res.ten).to be_an_instance_of(target.ten_output_class)
   end
 end

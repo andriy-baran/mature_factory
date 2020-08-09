@@ -157,7 +157,6 @@ RSpec.describe MatureFactory do
       it 'patches original classes' do
         obj = OpenStruct.new(h: 'h')
         res = child_of_child.assemble_main_struct(:init, obj)
-
         expect(res.zero.x).to eq 1
         expect(res.zero.y).to eq 2
         expect(res.zero.a).to eq 'a'
