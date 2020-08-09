@@ -1,3 +1,12 @@
+require 'mature_factory/features/assemble/method_missing_decoration'
+require 'mature_factory/features/assemble/wrapping_observer'
+require 'mature_factory/features/assemble/proxy'
+require 'mature_factory/features/assemble/builder'
+require 'mature_factory/features/assemble/builder/base'
+require 'mature_factory/features/assemble/builder/flat_composition'
+require 'mature_factory/features/assemble/builder/decoration_composition'
+require 'mature_factory/features/assemble/helpers'
+
 module MatureFactory
   module Features
     module Assemble
