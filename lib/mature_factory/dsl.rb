@@ -42,8 +42,7 @@ module MatureFactory
 
 	  def define_component_adding_method
 	    mod = self
-	    default_init = ->(klass, *attrs) { klass.new }
-	    define_method(component_name.to_sym) do |title, base_class: Class.new, init: default_init|
+	    define_method(component_name.to_sym) do |title, base_class: Class.new, init: nil|
 	      singleton_class.class_eval do
 	        attr_accessor :"#{mod.__mf_component_class_reader__(title)}"
 	        private :"#{mod.__mf_component_class_reader__(title)}="

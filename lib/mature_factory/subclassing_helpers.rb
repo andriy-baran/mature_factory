@@ -1,8 +1,15 @@
 module MatureFactory
 	module SubclassingHelpers
     def __mf_composite_define_init__(klass, &init)
-      return klass unless block_given?
-      klass.singleton_class.send(:define_method, :__mf_init__, &init)
+      if block_given?
+        klass.define_singleton_method(:__mf_init__, &init)
+      elsif klass.superclass.respond_to?(:__mf_init__)
+        parent_init = klass.superclass.method(:__mf_init__)
+        klass.define_singleton_method(:__mf_init__, &parent_init)
+      else
+        default_init = ->(c, *attrs, &block) { c.new(*attrs, &block) }
+        klass.define_singleton_method(:__mf_init__, &default_init)
+      end
     end
 
     def __mf_composite_patch_class__(base_class, &block)

@@ -32,7 +32,7 @@ RSpec.describe MatureFactory do
           end
 
           def call
-            { id: id, success: true }
+            { id: id, success: true, app: app }
           end
         end
 
@@ -47,7 +47,7 @@ RSpec.describe MatureFactory do
         end
       end
     end
-    value { { id: 3 } }
+    value { { id: 3, app: 'RSpec' } }
   end
 
   it { expect(operation_class).to respond_to(:controller) }
@@ -77,7 +77,7 @@ RSpec.describe MatureFactory do
         Class.new(operation_class) do
           formatter_controller do
             def call
-              { id: id, child: true }
+              { id: id, child: true, app: app }
             end
           end
         end
@@ -100,7 +100,7 @@ RSpec.describe MatureFactory do
         Class.new(operation_class) do
           formatter_controller do
             def call
-              { id: id, child: true }
+              { id: id, child: true, app: app }
             end
           end
         end
