@@ -1,8 +1,14 @@
 module MatureFactory
 	module DecorationHelpers
     def __mf_composite_define_init__(klass, &init)
-      return klass unless block_given?
-      klass.singleton_class.send(:define_method, :__mf_init__, &init)
+      if block_given?
+        klass.define_singleton_method(:__mf_init__, &init)
+      elsif klass.superclass.respond_to?(:__mf_init__)
+        klass.define_singleton_method(:__mf_init__, &klass.superclass.method(:__mf_init__))
+      else
+        default_init = ->(klass, *attrs, &block) { klass.new(*attrs, &block) }
+        klass.define_singleton_method(:__mf_init__, &default_init)
+      end
     end
 
     def __mf_composite_patch_class__(base_class, &block)
