@@ -93,15 +93,11 @@ RSpec.describe MatureFactory do
     context 'when break proc and after creation proc provided' do
       it 'returns enumerator with created objects' do
         res = target.assemble_main_struct do |c|
-                if c.title == :four
-                  c.after_create do |o|
-                    o.singleton_class.send(:define_method, :g) { 'g' }
-                  end
+                c.four do |o|
+                  def o.g; 'g'; end
                 end
-                if c.title == :zero
-                  c.init_with = [3, 4]
-                end
-                c.halt! if c.title == :one
+                c.zero(3, 4)
+                c.halt! if c.one?
               end
         expect(res.zero.x).to eq 3
         expect(res.zero.y).to eq 4
@@ -173,15 +169,11 @@ RSpec.describe MatureFactory do
       context 'when break proc and after creation proc provided' do
         it 'returns enumerator with created objects' do
           res = child_of_child.assemble_main_struct do |c|
-                  if c.title == :four
-                    c.after_create do |o|
-                      o.singleton_class.send(:define_method, :g) { 'g' }
-                    end
+                  c.four do |o|
+                    def o.g; 'g'; end
                   end
-                  if c.title == :zero
-                    c.init_with = [3, 4]
-                  end
-                  c.halt! if c.title == :one
+                  c.zero(3, 4)
+                  c.halt! if c.one?
                 end
           expect(res.zero.x).to eq 3
           expect(res.zero.y).to eq 4

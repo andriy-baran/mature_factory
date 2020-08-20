@@ -2,19 +2,29 @@ module MatureFactory
   module Features
     module Assemble
       module Proxy
-        attr_accessor :init_with
-        attr_reader :object, :title
-
-        def initialize(title, component_name)
+        def initialize(title, component_name, &block)
           @title = title
           @component_name = component_name
           @halt = false
           @object = nil
-          @after_create = proc {}
+          yield self if block_given?
+          __create_object__ if @object.nil?
         end
 
-        def after_create(&block)
-          block_given? ? @after_create = block : @after_create.call(@object)
+        def __object__
+          @object
+        end
+
+        def method_missing(method_name, *attrs, &block)
+          if method_name.end_with?('?')
+            method_name == :"#{@title}?"
+          elsif method_name.end_with?('=')
+            super
+          else
+            return if method_name != @title
+            __create_object__(*attrs)
+            yield @object if block_given?
+          end
         end
 
         def halt?
@@ -27,8 +37,8 @@ module MatureFactory
 
         private
 
-        def create_object
-          @object = self.class.superclass.__mf_assembler_new_instance__(@component_name, @title, *init_with)
+        def __create_object__(*attrs)
+          @object = self.class.superclass.__mf_assembler_new_instance__(@component_name, @title, *attrs)
         end
       end
     end

@@ -22,12 +22,9 @@ module MatureFactory
           private
 
           def build_component(step, component_name, &block)
-            proxy = proxy_class.new(step, component_name)
-            block.call(proxy) if block_given?
+            proxy = proxy_class.new(step, component_name, &block)
             throw :halt if proxy.halt? && type != :flatten
-            proxy.send(:create_object)
-            proxy.after_create
-            local_observer.on_new_object(step, proxy.object)
+            local_observer.on_new_object(step, proxy.__object__)
             throw :halt if proxy.halt? && type == :flatten
           end
         end

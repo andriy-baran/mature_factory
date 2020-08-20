@@ -50,6 +50,9 @@ RSpec.describe MatureFactory do
             @c = c
           end
         end
+        twelve_part do
+          def t; 't'; end
+        end
       end
     end
   end
@@ -59,6 +62,7 @@ RSpec.describe MatureFactory do
     expect(res.a).to eq 1
     expect(res.one.b).to eq 1
     expect(res.two.c).to eq 1
+    expect(res.two.four.five.nine.eleven.thirteen.twelve.t).to eq 't'
     expect(res.zero).to be_an_instance_of(target.zero_input_class)
     expect(res.one).to be_an_instance_of(target.one_wrapped_struct_class)
     expect(res.one.eight.seven).to be_an_instance_of(target.seven_stage_class)
