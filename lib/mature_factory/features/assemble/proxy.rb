@@ -16,9 +16,9 @@ module MatureFactory
         end
 
         def method_missing(method_name, *attrs, &block)
-          if method_name.end_with?('?')
+          if method_name.to_s.end_with?('?')
             method_name == :"#{@title}?"
-          elsif method_name.end_with?('=')
+          elsif method_name.to_s.end_with?('=')
             super
           else
             return if method_name != @title
