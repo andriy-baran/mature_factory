@@ -3,10 +3,29 @@ module MatureFactory
     module Assemble
       module Builder
         class Base < Struct.new(*DECORATION_ARTIFACTS_NAMES)
-          def observer_class; end
-          def local_observer; end
+          MMD_MODULE = MatureFactory::Features::Assemble::MethodMissingDecoration
+
+          def observer_class
+            Class.new(SimpleDelegator) do
+              attr_reader :previous_step
+              alias_method :current_object, :__getobj__
+              def on_new_object(accessor, object)
+                return if accessor.nil?
+                current_object.facade_push(accessor, object)
+              end
+            end
+          end
+
+          def local_observer
+            @local_observer ||= observer_class.new(result_object)
+          end
+
           def result_object
-            @result_object ||= proxy_class.superclass.public_send(:"new_#{title}_#{type}_struct_instance")
+            @result_object ||= begin
+              result = proxy_class.superclass.public_send(:"new_#{title}_#{type}_struct_instance")
+              result.facade_push(previous_step, current_object) if current_object
+              result
+            end
           end
 
           def call(&on_create_proc)
@@ -16,6 +35,11 @@ module MatureFactory
               end
             end
             local_observer.on_new_object(local_observer.previous_step, result_object) unless type == :flatten
+            return local_observer.current_object if type == :flatten
+            obj = local_observer.link_members
+            while delegate && (obj.predecessor rescue false)
+              obj = obj.public_send(obj.predecessor).extend(MMD_MODULE)
+            end
             local_observer.current_object
           end
 

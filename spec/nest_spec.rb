@@ -210,7 +210,7 @@ RSpec.describe MatureFactory do
       end
 
       it 'aggregates all data and methods in the pipe' do
-        obj = OpenStruct.new(h: 'h')
+        obj = Struct.new(:h).new('h')
         res = child_of_child.assemble_main_struct(:init, obj)
 
         expect(res.x).to eq 1
