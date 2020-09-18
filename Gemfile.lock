@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    mature_factory (0.2.5)
+    mature_factory (0.2.6)
       dry-inflector (~> 0.1)
       simple_facade (~> 0.2)
 

@@ -121,10 +121,10 @@ RSpec.describe MatureFactory do
     context 'when break proc and after creation proc provided' do
       it 'returns enumerator with created objects' do
         res = target.assemble_main_struct do |c|
-                c.two(3, 4) do |o|
+                c.step_two(3, 4) do |o|
                   def o.g; 'g'; end
                 end
-                c.halt! if c.one?
+                c.halt! if c.step_one?
               end
         expect(res.two.x).to eq 3
         expect(res.two.y).to eq 4
@@ -229,10 +229,10 @@ RSpec.describe MatureFactory do
       context 'when break proc and after creation proc provided' do
         it 'returns enumerator with created objects' do
           res = child_of_child.assemble_main_struct do |c|
-                  c.two(3, 4) do |o|
+                  c.step_two(3, 4) do |o|
                     def o.g; 'g'; end
                   end
-                  c.halt! if c.one?
+                  c.halt! if c.step_one?
                 end
           expect(res.two.x).to eq 3
           expect(res.two.y).to eq 4
