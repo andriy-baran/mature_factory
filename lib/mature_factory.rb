@@ -1,4 +1,5 @@
 require 'dry/inflector'
+require 'simple_facade'
 require 'mature_factory/dsl'
 require 'mature_factory/subclassing_helpers'
 require 'mature_factory/inheritance_helpers'

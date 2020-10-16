@@ -1,8 +1,9 @@
 PATH
   remote: .
   specs:
-    mature_factory (0.2.5)
+    mature_factory (0.2.6)
       dry-inflector (~> 0.1)
+      simple_facade (~> 0.2)
 
 GEM
   remote: https://rubygems.org/
@@ -34,6 +35,7 @@ GEM
     rspec-support (3.9.3)
     rspec_vars_helper (0.1.0)
       rspec (>= 2.4)
+    simple_facade (0.2.0)
 
 PLATFORMS
   ruby

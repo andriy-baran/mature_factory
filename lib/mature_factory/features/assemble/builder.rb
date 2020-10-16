@@ -6,13 +6,8 @@ module MatureFactory
           %i(log title type proxy_class previous_step current_object delegate)
 
         def self.call(context, &on_create_proc)
-          strategy = nil
           attrs = extract_values(BindingWrapper.new(context))
-          if !attrs[:delegate].nil?
-            strategy = DecorationComposition.new(*attrs.values)
-          else
-            strategy = FlatComposition.new(*attrs.values)
-          end
+          strategy = Base.new(*attrs.values)
           strategy.call(&on_create_proc)
         end
 

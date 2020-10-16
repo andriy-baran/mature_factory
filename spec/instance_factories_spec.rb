@@ -32,11 +32,11 @@ RSpec.describe MatureFactory do
     context 'when assembling objects' do
       it 'returns factory object for single instance' do
         res = target.assemble_main_struct do |c|
-                c.four do |o|
+                c.stage_four do |o|
                   def o.g; 'g'; end
                 end
-                c.zero(3, 4)
-                c.halt! if c.one?
+                c.input_zero(3, 4)
+                c.halt! if c.stage_one?
               end
         expect(res.zero.x).to eq 3
         expect(res.zero.y).to eq 4
