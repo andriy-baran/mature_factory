@@ -35,7 +35,7 @@ GEM
     rspec-support (3.9.3)
     rspec_vars_helper (0.1.0)
       rspec (>= 2.4)
-    simple_facade (0.2.0)
+    simple_facade (0.2.1)
 
 PLATFORMS
   ruby

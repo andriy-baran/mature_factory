@@ -1,7 +1,10 @@
 require 'mature_factory/features/assemble/method_missing_decoration'
 require 'mature_factory/features/assemble/proxy'
-require 'mature_factory/features/assemble/builder'
 require 'mature_factory/features/assemble/builder/base'
+require 'mature_factory/features/assemble/builder/wrap'
+require 'mature_factory/features/assemble/builder/nest'
+require 'mature_factory/features/assemble/builder/flat'
+require 'mature_factory/features/assemble/builder'
 require 'mature_factory/features/assemble/helpers'
 
 module MatureFactory

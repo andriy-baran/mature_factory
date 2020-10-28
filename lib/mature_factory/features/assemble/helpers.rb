@@ -5,14 +5,22 @@ module MatureFactory
         BUILDER_CLASS = MatureFactory::Features::Assemble::Builder
         PROXY_MODULE = MatureFactory::Features::Assemble::Proxy
 
-        class Tracer
-          attr_reader :log
-          def initialize
-            @log = {}
+        class Tracer < BasicObject
+          def initialize(order)
+            @logs = []
+            @is_reverse_order = order == :reverse
+          end
+
+          def traced_method_names_with_attr_as_hash
+            @logs.to_h
           end
 
           def method_missing(method_name, *attrs, &block)
-            @log[attrs.first] = method_name
+            if @is_reverse_order
+              @logs.unshift([attrs.first, method_name])
+            else
+              @logs.push([attrs.first, method_name])
+            end
           end
         end
 
@@ -27,16 +35,9 @@ module MatureFactory
 
         def __mf_assembler_execute_and_trace__(order: nil, &block)
           class_eval(&block)
-          tracer = Tracer.new
+          tracer = Tracer.new(order)
           tracer.instance_eval(&block)
-          case order
-          when :direct
-            tracer.log.each
-          when :reverse
-            tracer.log.reverse_each
-          else
-            tracer.log
-          end
+          tracer.traced_method_names_with_attr_as_hash
         end
 
         def __mf_assembler_define_struct_assemble_method__(title, log, type, delegate)

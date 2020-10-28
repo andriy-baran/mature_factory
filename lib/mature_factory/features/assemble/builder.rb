@@ -2,12 +2,15 @@ module MatureFactory
   module Features
     module Assemble
       module Builder
-        DECORATION_ARTIFACTS_NAMES =
-          %i(log title type proxy_class previous_step current_object delegate)
+        BUILD_STRATEGIES = {
+          flatten: Builder::Flat,
+          wrapped: Builder::Wrap,
+          nested: Builder::Nest,
+        }
 
         def self.call(context, &on_create_proc)
           attrs = extract_values(BindingWrapper.new(context))
-          strategy = Base.new(*attrs.values)
+          strategy = BUILD_STRATEGIES[attrs[:type]].new(*attrs.values)
           strategy.call(&on_create_proc)
         end
 
