@@ -125,14 +125,14 @@ RSpec.describe MatureFactory do
                   def o.g; 'g'; end
                 end
                 c.input_zero(3, 4)
-                c.halt! if c.step_one?
+                on_create { halt! if step_one? }
               end
         expect(res.x).to eq 3
         expect(res.y).to eq 4
         expect(res).to_not respond_to(:two)
         expect(res).to_not respond_to(:three)
         expect(res).to_not respond_to(:ten)
-        expect(res).to_not respond_to(:one)
+        expect(res).to respond_to(:one)
         expect(res).to respond_to(:four)
         expect(res).to respond_to(:zero)
         expect(res.g).to eq 'g'
@@ -234,14 +234,14 @@ RSpec.describe MatureFactory do
                     def o.g; 'g'; end
                   end
                   c.input_zero(3, 4)
-                  c.halt! if c.step_one?
+                  on_create { halt! if step_one? }
                 end
           expect(res.x).to eq 3
           expect(res.y).to eq 4
           expect(res).to_not respond_to(:two)
           expect(res).to_not respond_to(:three)
           expect(res).to_not respond_to(:ten)
-          expect(res).to_not respond_to(:one)
+          expect(res).to respond_to(:one)
           expect(res).to respond_to(:four)
           expect(res).to respond_to(:zero)
           expect(res.g).to eq 'g'

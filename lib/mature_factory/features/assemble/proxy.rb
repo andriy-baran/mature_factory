@@ -2,17 +2,20 @@ module MatureFactory
   module Features
     module Assemble
       module Proxy
-        def initialize(title, component_group, &block)
+        attr_reader :title, :group, :object
+
+        def initialize(title, group, halt, &block)
           @title = title
-          @component_group = component_group
-          @halt = false
+          @group = group
+          @halt = halt
           @object = nil
-          yield self if block_given?
+          @on_create_proc = nil
+          instance_eval(&block) if block_given?
           __create_object__ if @object.nil?
         end
 
-        def __object__
-          @object
+        def on_create(&block)
+          @on_create_proc = block
         end
 
         def method_missing(method_name, *attrs, &block)
@@ -24,6 +27,7 @@ module MatureFactory
             return if method_name != identity
             __create_object__(*attrs)
             yield @object if block_given?
+            @object
           end
         end
 
@@ -38,11 +42,12 @@ module MatureFactory
         private
 
         def identity
-          :"#{@component_group}_#{@title}"
+          :"#{@group}_#{@title}"
         end
 
         def __create_object__(*attrs)
-          @object = self.class.superclass.__mf_assembler_new_instance__(@component_group, @title, *attrs)
+          @object = self.class.superclass.__mf_assembler_new_instance__(@group, @title, *attrs)
+          instance_eval(&@on_create_proc) if @on_create_proc
         end
       end
     end

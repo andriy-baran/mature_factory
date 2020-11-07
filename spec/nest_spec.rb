@@ -130,7 +130,7 @@ RSpec.describe MatureFactory do
         expect(res.two.y).to eq 4
         expect(res).to_not respond_to(:zero)
         expect(res).to_not respond_to(:four)
-        expect(res).to_not respond_to(:one)
+        expect(res).to respond_to(:one)
         expect(res).to respond_to(:ten)
         expect(res).to respond_to(:three)
         expect(res).to respond_to(:two)
@@ -238,7 +238,7 @@ RSpec.describe MatureFactory do
           expect(res.two.y).to eq 4
           expect(res).to_not respond_to(:zero)
           expect(res).to_not respond_to(:four)
-          expect(res).to_not respond_to(:one)
+          expect(res).to respond_to(:one)
           expect(res).to respond_to(:ten)
           expect(res).to respond_to(:three)
           expect(res).to respond_to(:two)
