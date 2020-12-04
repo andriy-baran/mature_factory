@@ -56,11 +56,11 @@ RSpec.describe MatureFactory do
   it { expect(target).to respond_to(:zero_input_class) }
   it { expect(target).to respond_to(:ten_output_class) }
   it { expect(target).to respond_to(:main_flatten_struct_class) }
-  it { expect(target).to respond_to(:assemble_main_struct) }
+  it { expect(target).to respond_to(:build_main) }
 
   describe '.assemble_*_struct' do
     it 'returns resulted objects composition' do
-      res = target.assemble_main_struct
+      res = target.build_main
       expect(res).to respond_to(:ten)
       expect(res).to respond_to(:three)
       expect(res).to respond_to(:four)
@@ -77,7 +77,7 @@ RSpec.describe MatureFactory do
     end
 
     it 'patches original classes' do
-      res = target.assemble_main_struct
+      res = target.build_main
       expect(res.zero.a).to eq 'a'
       expect(res.zero.x).to eq 1
       expect(res.zero.y).to eq 2
@@ -92,12 +92,9 @@ RSpec.describe MatureFactory do
 
     context 'when break proc and after creation proc provided' do
       it 'returns enumerator with created objects' do
-        res = target.assemble_main_struct do |c|
-                c.stage_four do |o|
-                  def o.g; 'g'; end
-                end
-                c.input_zero(3, 4)
-                c.halt! if c.stage_one?
+        res = target.build_main do
+                zero_input(3, 4)
+                halt_if {|o,i| i.to_sym == :one_stage}
               end
         expect(res.zero.x).to eq 3
         expect(res.zero.y).to eq 4
@@ -105,7 +102,6 @@ RSpec.describe MatureFactory do
         expect { res.three }.to raise_error(NoMethodError)
         expect { res.ten }.to raise_error(NoMethodError)
         expect(res.one.c).to eq 'c'
-        expect(res.four.g).to eq 'g'
       end
     end
   end
@@ -133,7 +129,7 @@ RSpec.describe MatureFactory do
     describe '.assemble_*_struct' do
       it 'returns resulted objects composition' do
         obj = OpenStruct.new(h: 'h')
-        res = child_of_child.assemble_main_struct(:init, obj)
+        res = child_of_child.build_main(:init, obj)
         expect(res).to respond_to(:init)
         expect(res).to respond_to(:ten)
         expect(res).to respond_to(:three)
@@ -152,7 +148,7 @@ RSpec.describe MatureFactory do
 
       it 'patches original classes' do
         obj = OpenStruct.new(h: 'h')
-        res = child_of_child.assemble_main_struct(:init, obj)
+        res = child_of_child.build_main(:init, obj)
         expect(res.zero.x).to eq 1
         expect(res.zero.y).to eq 2
         expect(res.zero.a).to eq 'a'
@@ -168,12 +164,9 @@ RSpec.describe MatureFactory do
 
       context 'when break proc and after creation proc provided' do
         it 'returns enumerator with created objects' do
-          res = child_of_child.assemble_main_struct do |c|
-                  c.stage_four do |o|
-                    def o.g; 'g'; end
-                  end
-                  c.input_zero(3, 4)
-                  c.halt! if c.stage_one?
+          res = child_of_child.build_main do
+                  zero_input(3, 4)
+                  halt_if {|o,i| i.to_sym == :one_stage}
                 end
           expect(res.zero.x).to eq 3
           expect(res.zero.y).to eq 4
@@ -181,7 +174,6 @@ RSpec.describe MatureFactory do
           expect { res.three }.to raise_error(NoMethodError)
           expect { res.ten }.to raise_error(NoMethodError)
           expect(res.one.c).to eq 'c'
-          expect(res.four.g).to eq 'g'
         end
       end
     end

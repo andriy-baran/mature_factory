@@ -55,23 +55,29 @@ RSpec.describe MatureFactory do
   it { expect(target).to respond_to(:four_step_class) }
   it { expect(target).to respond_to(:zero_input_class) }
   it { expect(target).to respond_to(:ten_output_class) }
-  it { expect(target).to respond_to(:assemble_main_struct) }
+  it { expect(target).to respond_to(:build_main) }
 
   describe '.assemble_*_struct' do
     it 'returns resulted objects composition' do
-      res = target.assemble_main_struct
+      res = target.build_main
       expect(res).to respond_to(:ten)
       expect(res).to respond_to(:three)
       expect(res).to respond_to(:four)
       expect(res).to respond_to(:one)
-      expect(res).to respond_to(:zero)
       expect(res).to respond_to(:two)
+      expect(res).to respond_to(:zero)
       expect(res.ten).to be_an_instance_of(target.ten_output_class)
       expect(res.zero).to be_an_instance_of(target.zero_input_class)
       expect(res.three).to be_an_instance_of(target.three_step_class)
       expect(res.four).to be_an_instance_of(target.four_step_class)
       expect(res.one).to be_an_instance_of(target.one_step_class)
       expect(res.two).to be_an_instance_of(target.two_step_class)
+      expect(res.ten).to_not respond_to(:ten)
+      expect(res.ten).to respond_to(:three)
+      expect(res.ten).to respond_to(:two)
+      expect(res.ten).to respond_to(:four)
+      expect(res.ten).to respond_to(:one)
+      expect(res.ten).to respond_to(:zero)
       expect(res.three).to_not respond_to(:ten)
       expect(res.three).to_not respond_to(:three)
       expect(res.three).to respond_to(:two)
@@ -105,7 +111,7 @@ RSpec.describe MatureFactory do
     end
 
     it 'aggregates all data and methods in the pipe' do
-      res = target.assemble_main_struct
+      res = target.build_main
       expect(res.x).to eq 1
       expect(res.y).to eq 2
       expect(res.a).to eq 'a'
@@ -120,12 +126,9 @@ RSpec.describe MatureFactory do
 
     context 'when break proc and after creation proc provided' do
       it 'returns enumerator with created objects' do
-        res = target.assemble_main_struct do |c|
-                c.step_four do |o|
-                  def o.g; 'g'; end
-                end
-                c.input_zero(3, 4)
-                on_create { halt! if step_one? }
+        res = target.build_main do
+                zero_input(3, 4)
+                halt_if { |o,i| i.to_sym == :one_step }
               end
         expect(res.x).to eq 3
         expect(res.y).to eq 4
@@ -135,7 +138,6 @@ RSpec.describe MatureFactory do
         expect(res).to respond_to(:one)
         expect(res).to respond_to(:four)
         expect(res).to respond_to(:zero)
-        expect(res.g).to eq 'g'
       end
     end
   end
@@ -163,8 +165,7 @@ RSpec.describe MatureFactory do
     describe '.assemble_*_struct' do
       it 'returns resulted objects composition' do
         obj = OpenStruct.new(h: 'h')
-        res = child_of_child.assemble_main_struct(:init, obj)
-
+        res = child_of_child.build_main(:init, obj)
         expect(res).to respond_to(:ten)
         expect(res).to respond_to(:three)
         expect(res).to respond_to(:four)
@@ -212,8 +213,7 @@ RSpec.describe MatureFactory do
 
       it 'aggregates all data and methods in the pipe' do
         obj = Struct.new(:h).new('h')
-        res = child_of_child.assemble_main_struct(:init, obj)
-
+        res = child_of_child.build_main(:init, obj)
         expect(res.x).to eq 1
         expect(res.y).to eq 2
         expect(res.a).to eq 'a'
@@ -229,12 +229,9 @@ RSpec.describe MatureFactory do
 
       context 'when break proc and after creation proc provided' do
         it 'returns enumerator with created objects' do
-          res = child_of_child.assemble_main_struct do |c|
-                  c.step_four do |o|
-                    def o.g; 'g'; end
-                  end
-                  c.input_zero(3, 4)
-                  on_create { halt! if step_one? }
+          res = child_of_child.build_main do
+                  zero_input(3, 4)
+                  halt_if { |o,i| i.to_sym == :one_step }
                 end
           expect(res.x).to eq 3
           expect(res.y).to eq 4
@@ -244,7 +241,6 @@ RSpec.describe MatureFactory do
           expect(res).to respond_to(:one)
           expect(res).to respond_to(:four)
           expect(res).to respond_to(:zero)
-          expect(res.g).to eq 'g'
         end
       end
     end

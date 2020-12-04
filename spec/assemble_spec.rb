@@ -1,5 +1,5 @@
 class Fine; def inspect; '<Fine>'; end; end
-class Good; def inspect; '<Good>'; end; end
+class Good2; def inspect; '<Good>'; end; end
 class Best; def inspect; '<Best>'; end; end
 RSpec.describe MatureFactory do
   vars do
@@ -10,9 +10,9 @@ RSpec.describe MatureFactory do
 
         composed_of :elements
 
-        wrap :main do
+        wrap :main, delegate: true do
           element :fine, base_class: Fine
-          element :good, base_class: Good
+          element :good, base_class: Good2
           element :best, base_class: Best
         end
 
@@ -29,8 +29,8 @@ RSpec.describe MatureFactory do
 
   describe 'wrap' do
     it 'properly organize order of methods calling' do
-      res = target.assemble_main_struct do
-              on_create { halt! if !object.valid? }
+      res = target.build_main do
+              halt_if {|o,i| !o.valid?}
             end
       expect(res.valid?).to eq(false)
       # expect(res).to eq nil

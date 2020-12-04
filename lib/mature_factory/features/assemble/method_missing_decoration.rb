@@ -3,8 +3,8 @@ module MatureFactory
     module Assemble
       module MethodMissingDecoration
         def method_missing(name, *attrs, &block)
-          if methods.grep(:predecessor).first
-            public_send(predecessor).public_send(name, *attrs, &block)
+          if methods.grep(:__mf_predecessor__).first
+            public_send(__mf_predecessor__).public_send(name, *attrs, &block)
           else
             super
           end
@@ -12,8 +12,8 @@ module MatureFactory
 
         def respond_to_missing?(method_name, _include_private = false)
           predecessors, obj = [], self
-          while obj.methods.grep(:predecessor).first
-            predecessor = obj.public_send(obj.predecessor)
+          while obj.methods.grep(:__mf_predecessor__).first
+            predecessor = obj.public_send(obj.__mf_predecessor__)
             predecessors << obj = predecessor
           end
           predecessors.any? { |obj| obj.respond_to?(method_name) }

@@ -58,7 +58,7 @@ RSpec.describe MatureFactory do
   end
 
   it 'returns resulted objects composition' do
-    res = target.assemble_main_struct
+    res = target.build_main
     expect(res.a).to eq 1
     expect(res.one.b).to eq 1
     expect(res.two.c).to eq 1
