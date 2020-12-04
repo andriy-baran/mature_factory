@@ -55,11 +55,12 @@ RSpec.describe MatureFactory do
   it { expect(target).to respond_to(:four_step_class) }
   it { expect(target).to respond_to(:zero_input_class) }
   it { expect(target).to respond_to(:ten_output_class) }
-  it { expect(target).to respond_to(:assemble_main_struct) }
+  it { expect(target).to respond_to(:main_nested_struct_class) }
+  it { expect(target).to respond_to(:build_main) }
 
   describe '.assemble_*_struct' do
     it 'returns resulted objects composition' do
-      res = target.assemble_main_struct
+      res = target.build_main
       expect(res).to respond_to(:zero)
       expect(res).to respond_to(:three)
       expect(res).to respond_to(:four)
@@ -105,7 +106,7 @@ RSpec.describe MatureFactory do
     end
 
     it 'aggregates all data and methods in the pipe' do
-      res = target.assemble_main_struct
+      res = target.build_main
       expect(res.x).to eq 1
       expect(res.y).to eq 2
       expect(res.a).to eq 'a'
@@ -120,11 +121,9 @@ RSpec.describe MatureFactory do
 
     context 'when break proc and after creation proc provided' do
       it 'returns enumerator with created objects' do
-        res = target.assemble_main_struct do |c|
-                c.step_two(3, 4) do |o|
-                  def o.g; 'g'; end
-                end
-                c.halt! if c.step_one?
+        res = target.build_main do
+                two_step(3, 4)
+                halt_if {|_, id| id.to_sym == :one_step }
               end
         expect(res.two.x).to eq 3
         expect(res.two.y).to eq 4
@@ -134,7 +133,6 @@ RSpec.describe MatureFactory do
         expect(res).to respond_to(:ten)
         expect(res).to respond_to(:three)
         expect(res).to respond_to(:two)
-        expect(res.g).to eq 'g'
       end
     end
   end
@@ -162,8 +160,7 @@ RSpec.describe MatureFactory do
     describe '.assemble_*_struct' do
       it 'returns resulted objects composition' do
         obj = OpenStruct.new(h: 'h')
-        res = child_of_child.assemble_main_struct(:init, obj)
-
+        res = child_of_child.build_main(:init, obj)
         expect(res).to respond_to(:zero)
         expect(res).to respond_to(:three)
         expect(res).to respond_to(:four)
@@ -211,8 +208,7 @@ RSpec.describe MatureFactory do
 
       it 'aggregates all data and methods in the pipe' do
         obj = Struct.new(:h).new('h')
-        res = child_of_child.assemble_main_struct(:init, obj)
-
+        res = child_of_child.build_main(:init, obj)
         expect(res.x).to eq 1
         expect(res.y).to eq 2
         expect(res.a).to eq 'a'
@@ -228,11 +224,9 @@ RSpec.describe MatureFactory do
 
       context 'when break proc and after creation proc provided' do
         it 'returns enumerator with created objects' do
-          res = child_of_child.assemble_main_struct do |c|
-                  c.step_two(3, 4) do |o|
-                    def o.g; 'g'; end
-                  end
-                  c.halt! if c.step_one?
+          res = child_of_child.build_main do
+                  two_step(3, 4)
+                  halt_if {|_, id| id.to_sym == :one_step }
                 end
           expect(res.two.x).to eq 3
           expect(res.two.y).to eq 4
@@ -242,7 +236,6 @@ RSpec.describe MatureFactory do
           expect(res).to respond_to(:ten)
           expect(res).to respond_to(:three)
           expect(res).to respond_to(:two)
-          expect(res.g).to eq 'g'
         end
       end
     end
