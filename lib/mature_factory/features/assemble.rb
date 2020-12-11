@@ -1,5 +1,6 @@
 require 'mature_factory/features/assemble/method_missing_decoration'
 require 'mature_factory/features/assemble/id'
+require 'mature_factory/features/assemble/proxy'
 require 'mature_factory/features/assemble/abstract_builder'
 require 'mature_factory/features/assemble/helpers'
 
