@@ -59,7 +59,7 @@ RSpec.describe MatureFactory do
 
   describe '.assemble_*_struct' do
     it 'returns resulted objects composition' do
-      res = target.build_main
+      res = target.build_main.call
       expect(res).to respond_to(:ten)
       expect(res).to respond_to(:three)
       expect(res).to respond_to(:four)
@@ -111,7 +111,7 @@ RSpec.describe MatureFactory do
     end
 
     it 'aggregates all data and methods in the pipe' do
-      res = target.build_main
+      res = target.build_main.call
       expect(res.x).to eq 1
       expect(res.y).to eq 2
       expect(res.a).to eq 'a'
@@ -126,10 +126,8 @@ RSpec.describe MatureFactory do
 
     context 'when break proc and after creation proc provided' do
       it 'returns enumerator with created objects' do
-        res = target.build_main do
-                zero_input(3, 4)
-                halt_if { |o,i| i.to_sym == :one_step }
-              end
+        plan = target.build_main { zero_input(3, 4) }
+        res = plan.call { |o,i| throw :halt if i.to_sym == :one_step }
         expect(res.x).to eq 3
         expect(res.y).to eq 4
         expect(res).to_not respond_to(:two)
@@ -165,7 +163,7 @@ RSpec.describe MatureFactory do
     describe '.assemble_*_struct' do
       it 'returns resulted objects composition' do
         obj = OpenStruct.new(h: 'h')
-        res = child_of_child.build_main(:init, obj)
+        res = child_of_child.build_main(:init, obj).call
         expect(res).to respond_to(:ten)
         expect(res).to respond_to(:three)
         expect(res).to respond_to(:four)
@@ -213,7 +211,7 @@ RSpec.describe MatureFactory do
 
       it 'aggregates all data and methods in the pipe' do
         obj = Struct.new(:h).new('h')
-        res = child_of_child.build_main(:init, obj)
+        res = child_of_child.build_main(:init, obj).call
         expect(res.x).to eq 1
         expect(res.y).to eq 2
         expect(res.a).to eq 'a'
@@ -229,10 +227,8 @@ RSpec.describe MatureFactory do
 
       context 'when break proc and after creation proc provided' do
         it 'returns enumerator with created objects' do
-          res = child_of_child.build_main do
-                  zero_input(3, 4)
-                  halt_if { |o,i| i.to_sym == :one_step }
-                end
+          plan = child_of_child.build_main { zero_input(3, 4) }
+          res = plan.call { |o,i| throw :halt if i.to_sym == :one_step }
           expect(res.x).to eq 3
           expect(res.y).to eq 4
           expect(res).to_not respond_to(:two)

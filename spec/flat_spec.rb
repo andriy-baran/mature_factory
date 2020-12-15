@@ -60,7 +60,7 @@ RSpec.describe MatureFactory do
 
   describe '.assemble_*_struct' do
     it 'returns resulted objects composition' do
-      res = target.build_main
+      res = target.build_main.call
       expect(res).to respond_to(:ten)
       expect(res).to respond_to(:three)
       expect(res).to respond_to(:four)
@@ -77,7 +77,7 @@ RSpec.describe MatureFactory do
     end
 
     it 'patches original classes' do
-      res = target.build_main
+      res = target.build_main.call
       expect(res.zero.a).to eq 'a'
       expect(res.zero.x).to eq 1
       expect(res.zero.y).to eq 2
@@ -92,10 +92,8 @@ RSpec.describe MatureFactory do
 
     context 'when break proc and after creation proc provided' do
       it 'returns enumerator with created objects' do
-        res = target.build_main do
-                zero_input(3, 4)
-                halt_if {|o,i| i.to_sym == :one_stage}
-              end
+        plan = target.build_main { zero_input(3, 4) }
+        res = plan.call {|o,i| throw :halt if i.to_sym == :one_stage}
         expect(res.zero.x).to eq 3
         expect(res.zero.y).to eq 4
         expect { res.two }.to raise_error(NoMethodError)
@@ -129,7 +127,7 @@ RSpec.describe MatureFactory do
     describe '.assemble_*_struct' do
       it 'returns resulted objects composition' do
         obj = OpenStruct.new(h: 'h')
-        res = child_of_child.build_main(:init, obj)
+        res = child_of_child.build_main(:init, obj).call
         expect(res).to respond_to(:init)
         expect(res).to respond_to(:ten)
         expect(res).to respond_to(:three)
@@ -148,7 +146,7 @@ RSpec.describe MatureFactory do
 
       it 'patches original classes' do
         obj = OpenStruct.new(h: 'h')
-        res = child_of_child.build_main(:init, obj)
+        res = child_of_child.build_main(:init, obj).call
         expect(res.zero.x).to eq 1
         expect(res.zero.y).to eq 2
         expect(res.zero.a).to eq 'a'
@@ -164,10 +162,8 @@ RSpec.describe MatureFactory do
 
       context 'when break proc and after creation proc provided' do
         it 'returns enumerator with created objects' do
-          res = child_of_child.build_main do
-                  zero_input(3, 4)
-                  halt_if {|o,i| i.to_sym == :one_stage}
-                end
+          plan = child_of_child.build_main { zero_input(3, 4) }
+          res = plan.call {|o,i| throw :halt if i.to_sym == :one_stage}
           expect(res.zero.x).to eq 3
           expect(res.zero.y).to eq 4
           expect { res.two }.to raise_error(NoMethodError)

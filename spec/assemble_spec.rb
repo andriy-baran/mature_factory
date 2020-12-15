@@ -29,11 +29,9 @@ RSpec.describe MatureFactory do
 
   describe 'wrap' do
     it 'properly organize order of methods calling' do
-      res = target.build_main do
-              halt_if {|o,i| !o.valid?}
-            end
+      res = target.build_main.call {|o, i| p i; throw :halt if !o.valid? }
+      # res = target.build_main.call
       expect(res.valid?).to eq(false)
-      # expect(res).to eq nil
     end
   end
 end
