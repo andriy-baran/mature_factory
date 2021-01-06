@@ -17,7 +17,7 @@ module MatureFactory
 
     def __mf_inheritance_store_parent_components_of_composite__(composite)
       readers_regexp = Regexp.new("\\w+_#{composite.component_name}_class\\z")
-      superclass.public_methods.grep(readers_regexp).each do |reader_method|
+      superclass.public_methods.grep(readers_regexp).grep_v(/write_/).each do |reader_method|
         klass = superclass.public_send(reader_method)
         send(:"#{reader_method}=", klass)
       end
