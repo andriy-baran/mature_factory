@@ -28,8 +28,12 @@ module MatureFactory
         :"mf_#{title}"
       end
 
-      def __mf_store_method_name__(title = component_name)
-        :"__mf_store_#{title}_class__"
+      def __mf_simple_store_method_name__(name)
+        :"__mf_simple_store_#{__mf_component_class_reader__(name)}_class__"
+      end
+
+      def __mf_store_method_name__(name)
+        :"#{__mf_component_class_reader__(name)}="
       end
 
       def __mf_activation_method_name__(title = component_name)
@@ -57,7 +61,6 @@ module MatureFactory
         mod.component_name = inflector.singularize(components_name)
         mod.define_components_registry
         mod.define_component_adding_method
-        mod.define_component_store_method
         mod.define_component_activation_method
       end
 		end
