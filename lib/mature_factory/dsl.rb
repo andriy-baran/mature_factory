@@ -12,11 +12,11 @@ module MatureFactory
 	    mod = self
 	    define_method(:"__mf_activate_#{mod.component_name}_component__") do |method_name, base_class, klass, init = nil, &block|
 	      component_class = public_send(:"#{mod.__mf_registry_method_name__}")[method_name] # inherited
+
 	      raise(ArgumentError, 'please provide a block or class') if component_class.nil? && klass.nil? && block.nil?
+	      __mf_composite_check_inheritance__!(klass, base_class)
 
 	      target_class = component_class || klass || base_class
-
-	      __mf_composite_check_inheritance__!(target_class, base_class)
 
 	      patched_class = __mf_composite_patch_class__(target_class, &block)
 	      __mf_composite_define_init__(patched_class, &init)
