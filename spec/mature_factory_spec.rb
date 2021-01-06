@@ -77,7 +77,7 @@ RSpec.describe MatureFactory do
     it 'raises ArgumentError' do
       parser_class = Class.new
       expect do
-        operation_class.parser_controller parser_class
+        operation_class.parser_controller_class = parser_class
       end.to raise_error(ArgumentError, "must be a subclass of #{operation_class.parser_controller_class}")
     end
   end
