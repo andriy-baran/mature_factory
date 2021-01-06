@@ -1,3 +1,5 @@
+class Parser; end
+
 RSpec.describe MatureFactory do
   vars do
     other_class! do
@@ -15,7 +17,7 @@ RSpec.describe MatureFactory do
           @formatter = formatter
         end
 
-        controller :parser
+        controller :parser, base_class: Parser
         controller :formatter, init: ->(klass, **options) { klass.new(options.merge(app: 'RSpec')) }
 
         parser_controller do
@@ -68,6 +70,15 @@ RSpec.describe MatureFactory do
     it 'when everything is ok' do
       operation = operation_class.test_instance(JSON.dump(value))
       expect(operation.call).to eq(value.merge(success: true))
+    end
+  end
+
+  context 'when class provided, but not a subclass of SteelWheel::Action' do
+    it 'raises ArgumentError' do
+      parser_class = Class.new
+      expect do
+        operation_class.parser_controller parser_class
+      end.to raise_error(ArgumentError, "must be a subclass of #{operation_class.parser_controller_class}")
     end
   end
 
