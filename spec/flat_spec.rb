@@ -172,6 +172,20 @@ RSpec.describe MatureFactory do
           expect(res.one.c).to eq 'c'
         end
       end
+
+      context 'when input is breaks the flow' do
+        it 'does something' do
+          obj = OpenStruct.new(h: 'h', valid?: false)
+          res = child_of_child.build_main(:init, obj).call { |o, _| throw :halt if !o.valid? }
+          expect(res).to respond_to(:init)
+          expect(res).to_not respond_to(:ten)
+          expect(res).to_not respond_to(:three)
+          expect(res).to_not respond_to(:four)
+          expect(res).to_not respond_to(:one)
+          expect(res).to_not respond_to(:zero)
+          expect(res).to_not respond_to(:two)
+        end
+      end
     end
   end
 end

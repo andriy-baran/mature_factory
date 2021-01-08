@@ -6,7 +6,10 @@ module MatureFactory::Features::Assemble::Strategies
       Enumerator.new do |yielder|
         strategy.call.inject(nil) do |object, (title, layer_object, id)|
           @object, @step = layer_object, id.title.to_sym
-          next layer_object if title.nil?
+          if title.nil?
+            yielder << [layer_object, id]
+            next layer_object
+          end
           MatureFactory::Features::Assemble::AbstractBuilder.
             link_with_delegation(layer_object, object, title, delegate)
           yielder << [layer_object, id]
