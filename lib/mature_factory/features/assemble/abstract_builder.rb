@@ -22,12 +22,12 @@ module MatureFactory::Features::Assemble
 
     def nest(name, delegate, &block)
       factory.class_eval(&block)
-      factory.define_singleton_method(:"build_#{name}") do |title = nil, object = nil, &on_create|
-        raise(ArgumentError, 'Both arguments required') if title.nil? ^ object.nil?
+      factory.define_singleton_method(:"build_#{name}") do |object: nil, title: nil, group: nil, &on_create|
+        raise(ArgumentError, 'Please provide object: and title: arguments') if title.nil? ^ object.nil?
         trace = Strategies::Trace.new(&block)
         reverse = Strategies::Reverse.new(trace)
         prepare = Strategies::Prepare.new(reverse, self)
-        pipe = Strategies::Transform.new(prepare, title, object).call
+        pipe = Strategies::Transform.new(prepare, group, title, object).call
         list = pipe.map(&:last).map(&:to_sym)
         inject = Strategies::Inject.new(list, &on_create)
         init = Strategies::Init.new(inject, pipe)
@@ -40,11 +40,11 @@ module MatureFactory::Features::Assemble
 
     def wrap(name, delegate, &block)
       factory.class_eval(&block)
-      factory.define_singleton_method(:"build_#{name}") do |title = nil, object = nil, &on_create|
-        raise(ArgumentError, 'Both arguments required') if title.nil? ^ object.nil?
+      factory.define_singleton_method(:"build_#{name}") do |object: nil, title: nil, group: nil, &on_create|
+        raise(ArgumentError, 'Please provide object: and title: arguments') if (group.nil? && title.nil?) ^ object.nil?
         trace = Strategies::Trace.new(&block)
         prepare = Strategies::Prepare.new(trace, self)
-        pipe = Strategies::Transform.new(prepare, title, object).call
+        pipe = Strategies::Transform.new(prepare, group, title, object).call
         list = pipe.map(&:last).map(&:to_sym)
         inject = Strategies::Inject.new(list, &on_create)
         init = Strategies::Init.new(inject, pipe)
@@ -57,12 +57,12 @@ module MatureFactory::Features::Assemble
 
     def flat(name, &block)
       factory.class_eval(&block)
-      factory.define_singleton_method(:"build_#{name}") do |title = nil, object = nil, &on_create|
-        raise(ArgumentError, 'Both arguments required') if title.nil? ^ object.nil?
+      factory.define_singleton_method(:"build_#{name}") do |object: nil, title: nil, group: nil, &on_create|
+        raise(ArgumentError, 'Please provide object: and title: arguments') if (group.nil? && title.nil?) ^ object.nil?
         trace = Strategies::Trace.new(&block)
         prepare = Strategies::Prepare.new(trace, self)
         list = prepare.call.to_a
-        list.unshift([nil, title, proc{object}]) unless object.nil?
+        list.unshift([group, title, proc{object}]) unless object.nil?
         list = list.transpose
         ids = list[0..1].transpose.map{|g,e| MatureFactory::Features::Assemble::Id.new(g,e)}
         inject = Strategies::Inject.new(ids.map(&:to_sym), &on_create)

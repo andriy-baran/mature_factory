@@ -127,7 +127,7 @@ RSpec.describe MatureFactory do
     describe '.assemble_*_struct' do
       it 'returns resulted objects composition' do
         obj = OpenStruct.new(h: 'h')
-        res = child_of_child.build_main(:init, obj).call
+        res = child_of_child.build_main(object: obj, title: :init).call
         expect(res).to respond_to(:init)
         expect(res).to respond_to(:ten)
         expect(res).to respond_to(:three)
@@ -146,7 +146,7 @@ RSpec.describe MatureFactory do
 
       it 'patches original classes' do
         obj = OpenStruct.new(h: 'h')
-        res = child_of_child.build_main(:init, obj).call
+        res = child_of_child.build_main(object: obj, title: :init).call
         expect(res.zero.x).to eq 1
         expect(res.zero.y).to eq 2
         expect(res.zero.a).to eq 'a'
@@ -176,7 +176,7 @@ RSpec.describe MatureFactory do
       context 'when input is breaks the flow' do
         it 'does something' do
           obj = OpenStruct.new(h: 'h', valid?: false)
-          res = child_of_child.build_main(:init, obj).call { |o, _| throw :halt if !o.valid? }
+          res = child_of_child.build_main(object: obj, title: :init).call { |o, _| throw :halt if !o.valid? }
           expect(res).to respond_to(:init)
           expect(res).to_not respond_to(:ten)
           expect(res).to_not respond_to(:three)
