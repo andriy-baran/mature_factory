@@ -21,17 +21,17 @@ module MatureFactory
           receiver.extend Helpers
         end
 
-        def wrap(title, base_class: Class.new, init: nil, delegate: false, &block)
+        def wrap(title, base_class: Class.new(Object), init: nil, delegate: false, &block)
           wrapped_struct(title, base_class: base_class, init: init)
           AbstractBuilder.new(self).wrap(title, delegate, &block)
         end
 
-        def nest(title, base_class: Class.new, init: nil, delegate: false, &block)
+        def nest(title, base_class: Class.new(Object), init: nil, delegate: false, &block)
           nested_struct(title, base_class: base_class, init: init)
           AbstractBuilder.new(self).nest(title, delegate, &block)
         end
 
-        def flat(title, base_class: Class.new, init: nil, &block)
+        def flat(title, base_class: Class.new(Object), init: nil, &block)
           flatten_struct(title, base_class: base_class, init: init)
           AbstractBuilder.new(self).flat(title, &block)
         end

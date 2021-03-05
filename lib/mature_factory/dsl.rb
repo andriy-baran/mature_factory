@@ -52,7 +52,7 @@ module MatureFactory
 
 	  def define_component_adding_method
 	    mod = self
-	    define_method(component_name.to_sym) do |title, base_class: Class.new, init: nil|
+	    define_method(component_name.to_sym) do |title, base_class: Class.new(Object), init: nil|
 	      singleton_class.class_eval do
 	        attr_accessor :"#{mod.__mf_component_class_reader__(title)}"
 	        alias_method :"write_#{mod.__mf_component_class_reader__(title)}", :"#{mod.__mf_component_class_reader__(title)}="
