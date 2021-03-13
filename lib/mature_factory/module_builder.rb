@@ -15,7 +15,7 @@ module MatureFactory
       end
 
       def extended(receiver)
-        receiver.extend MatureFactory::DecorationHelpers
+        receiver.extend MatureFactory::SubclassingHelpers
         receiver.extend MatureFactory::InheritanceHelpers
       end
 

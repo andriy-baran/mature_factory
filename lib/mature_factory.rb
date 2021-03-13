@@ -1,6 +1,6 @@
 require 'dry/inflector'
 require 'mature_factory/dsl'
-require 'mature_factory/decoration_helpers'
+require 'mature_factory/subclassing_helpers'
 require 'mature_factory/group_definition'
 require 'mature_factory/inheritance_helpers'
 require 'mature_factory/module_builder'
