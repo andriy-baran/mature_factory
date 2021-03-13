@@ -5,13 +5,13 @@ RSpec.describe MatureFactory do
     other_class! do
       Class.new do
         include MatureFactory
-        composed_of :components
+        produces :components
       end
     end
     operation_class do
       Class.new do
         include MatureFactory
-        composed_of :controllers
+        produces :controllers
 
         def initialize(formatter)
           @formatter = formatter
