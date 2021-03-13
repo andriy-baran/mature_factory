@@ -5,7 +5,8 @@ module MatureFactory
     module Setup
       def self.extended(receiver)
         class << receiver
-          attr_accessor :component_name, :components_name
+          attr_accessor :component_name, :components_name,
+            :default_base_class, :default_init
         end
       end
 
@@ -50,6 +51,7 @@ module MatureFactory
 		def self.call(components_name)
 			new.tap do |mod|
         mod.extend Setup
+        yield mod if block_given?
         mod.extend MatureFactory::DSL
         mod.components_name = components_name
         mod.component_name = inflector.singularize(components_name)
