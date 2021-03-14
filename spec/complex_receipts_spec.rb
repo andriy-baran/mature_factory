@@ -5,7 +5,7 @@ RSpec.describe MatureFactory do
         include MatureFactory
         include MatureFactory::Features::Assemble
 
-        composed_of :inputs, :outputs, :stages, :parts
+        produces :inputs, :outputs, :stages, :parts
 
         flat :main, init: ->(k, a = 1){k.new(a: a)} do
           input :zero

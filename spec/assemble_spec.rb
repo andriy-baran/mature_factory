@@ -8,7 +8,7 @@ RSpec.describe MatureFactory do
         include MatureFactory
         include MatureFactory::Features::Assemble
 
-        composed_of :elements
+        produces :elements
 
         wrap :main, delegate: true do
           element :fine, base_class: Fine

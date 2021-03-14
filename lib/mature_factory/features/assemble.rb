@@ -17,7 +17,7 @@ module MatureFactory
         end
 
         def self.extended(receiver)
-          receiver.composed_of :flatten_structs, :wrapped_structs, :nested_structs
+          receiver.produces :flatten_structs, :wrapped_structs, :nested_structs
           receiver.extend Helpers
         end
 

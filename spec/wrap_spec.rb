@@ -5,7 +5,7 @@ RSpec.describe MatureFactory do
         include MatureFactory
         include MatureFactory::Features::Assemble
 
-        composed_of :inputs, :outputs, :steps
+        produces :inputs, :outputs, :steps
 
         wrap :main, delegate: true, base_class: Class.new {def to_s; 'main'; end} do
           input :zero, init: -> (klass, x = 1, y = 2) { klass.new(x, y) }

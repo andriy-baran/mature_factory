@@ -5,7 +5,7 @@ RSpec.describe MatureFactory do
         include MatureFactory
         include MatureFactory::Features::Assemble
 
-        composed_of :inputs, :outputs, :steps
+        produces :inputs, :outputs, :steps
 
         nest :main, delegate: true, base_class: Class.new {def to_s; 'main'; end} do
           input :zero
@@ -15,7 +15,6 @@ RSpec.describe MatureFactory do
           step :three
           output :ten
         end
-
         zero_input do
           def a; 'a'; end
         end
@@ -32,6 +31,9 @@ RSpec.describe MatureFactory do
             @y = y
           end
           def d; 'd'; end
+          def self.inspect
+            '<TWO>'
+          end
         end
         three_step do
           def e; 'e'; end
