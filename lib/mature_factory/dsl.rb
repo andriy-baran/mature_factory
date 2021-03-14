@@ -20,13 +20,12 @@ module MatureFactory
 
 	  def define_component_activation_method
 	    mod = self
-	    define_method(:"__mf_activate_#{mod.component_name}_component__") do |method_name, base_class, klass, init = nil, &block|
-	      component_class = public_send(:"#{mod.__mf_registry_method_name__}")[method_name] # inherited
-
-	      raise(ArgumentError, 'please provide a block or class') if component_class.nil? && klass.nil? && block.nil?
+	    define_method(:"__mf_activate_#{mod.component_name}_component__") do |title, base_class, klass, init = nil, &block|
+	      # component_class = public_send(:"#{mod.__mf_registry_method_name__}")[title] # inherited
+	      raise(ArgumentError, 'please provide a block or class') if klass.nil? && block.nil?
 	      __mf_composite_check_inheritance__!(klass, base_class)
 
-	      target_class = component_class || klass || base_class
+	      target_class = klass || base_class
 
 	      patched_class = __mf_composite_patch_class__(target_class, &block)
 	      __mf_composite_define_init__(patched_class, &init)
@@ -53,17 +52,18 @@ module MatureFactory
 
 	  def define_component_adding_method
 	    mod = self
-	    define_method(component_name.to_sym) do |method_name, base_class: mod.default_base_class, init: mod.default_init|
+	    define_method(component_name.to_sym) do |title, base_class: nil, init: nil|
 	      singleton_class.class_eval do
 	        attr_accessor :"#{mod.__mf_component_class_reader__(method_name)}"
 	        alias_method :"write_#{mod.__mf_component_class_reader__(method_name)}", :"#{mod.__mf_component_class_reader__(method_name)}="
 	      end
-	      __mf_composite_define_init__(base_class, &init)
-	      mod.define_component_store_method(self, method_name)
-	      mod.define_component_simple_store_method(self, method_name)
-	      send(mod.__mf_simple_store_method_name__(method_name), base_class)
-	      mod.define_component_configure_method(method_name)
-	      mod.define_component_new_instance_method(method_name)
+	      klass = base_class || mod.default_base_class || Class.new(Object)
+	      __mf_composite_define_init__(klass, &(init || mod.default_init))
+	      mod.define_component_store_method(self, title)
+	      mod.define_component_simple_store_method(self, title)
+	      send(mod.__mf_simple_store_method_name__(title), klass)
+	      mod.define_component_configure_method(title)
+	      mod.define_component_new_instance_method(title)
 	    end
 	  end
 

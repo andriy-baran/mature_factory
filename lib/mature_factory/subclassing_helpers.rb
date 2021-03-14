@@ -19,7 +19,7 @@ module MatureFactory
     def __mf_composite_check_inheritance__!(component_class, base_class)
       return if component_class.nil? || base_class.nil?
       unless component_class <= base_class
-        raise(ArgumentError, "must be a subclass of #{base_class.to_s}")
+        raise(ArgumentError, "must be a subclass of #{base_class.inspect}")
       end
     end
   end

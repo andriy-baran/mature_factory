@@ -1,9 +1,9 @@
 module MatureFactory
   class Prototype
-    def self.[](components_name, base_class: Class.new(Object), init: nil)
+    def self.[](components_name, base_class: nil, init: nil)
       registry.resolve(components_name) do |mod|
-        mod.default_base_class = base_class
-        mod.default_init = init
+        mod.default_base_class = base_class if base_class
+        mod.default_init = init if init
       end
     end
 
