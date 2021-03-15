@@ -17,15 +17,15 @@ module MatureFactory
       def extended(receiver)
         receiver.extend MatureFactory::SubclassingHelpers
         receiver.extend MatureFactory::InheritanceHelpers
-        receiver.private_class_method :__mf_composite_define_init__
-        receiver.private_class_method :__mf_composite_patch_class__
-        receiver.private_class_method :__mf_composite_check_inheritance__!
+        receiver.private_class_method :__mf_prototype_define_init__
+        receiver.private_class_method :__mf_prototype_patch_class__
+        receiver.private_class_method :__mf_prototype_check_inheritance__!
         receiver.private_class_method :__mf_inheritance_store_parent_components_of_composite__
         receiver.private_class_method :__mf_inheritance_activate_parent_components_of_composite__
         receiver.private_class_method :__mf_inheritance_reactivate_composites__
       end
 
-      def __mf_registry_method_name__(title = components_name)
+      def __mf_local_registry_name__(title = components_name)
         :"mf_#{title}"
       end
 
@@ -54,13 +54,14 @@ module MatureFactory
       MatureFactory.inflector
     end
 
-		def self.call(components_name)
+		def self.call(components_name, **attrs)
 			new.tap do |mod|
         mod.extend Setup
-        yield mod if block_given?
-        mod.extend MatureFactory::DSL
         mod.components_name = components_name
         mod.component_name = inflector.singularize(components_name)
+        mod.default_base_class = attrs[:base_class]
+        mod.default_init = attrs[:init]
+        mod.extend MatureFactory::DSL
         mod.define_components_registry
         mod.define_component_adding_method
         mod.define_component_activation_method

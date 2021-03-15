@@ -24,7 +24,7 @@ module MatureFactory
     end
 
     def __mf_inheritance_activate_parent_components_of_composite__(composite)
-      superclass.public_send("#{composite.__mf_registry_method_name__}").each do |component, klass|
+      superclass.public_send("#{composite.__mf_local_registry_name__}").each do |component, klass|
         public_send(composite.__mf_store_method_name__(component), klass)
       end
     end

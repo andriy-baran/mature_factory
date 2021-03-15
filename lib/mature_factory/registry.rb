@@ -5,8 +5,8 @@ module MatureFactory
       @on_missing_key = on_missing_key
     end
 
-    def resolve(components_name, &block)
-      find(components_name) || build(components_name, &block)
+    def resolve(components_name, **attrs)
+      find(components_name) || build(components_name, attrs)
     end
 
     def registered_modules
@@ -23,8 +23,8 @@ module MatureFactory
       @modules[module_name] = module_instance
     end
 
-    def build(components_name, &block)
-      register(components_name, @on_missing_key.call(components_name, &block))
+    def build(components_name, **attrs)
+      register(components_name, @on_missing_key.call(components_name, attrs))
     end
   end
 end
