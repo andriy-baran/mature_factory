@@ -6,14 +6,14 @@ RSpec.describe MatureFactory do
         include MatureFactory
 
         produces :inputs, :outputs do
-          layers base_class: CustomType, init: -> (k,id) { k.new(id) }
+          parts base_class: CustomType, init: -> (k,id) { k.new(id) }
         end
 
         input :one
         input :two
-        layer :one
+        part :one
 
-        one_layer do
+        one_part do
           def triple
             id * 3
           end
@@ -24,7 +24,7 @@ RSpec.describe MatureFactory do
 
   it { expect(target).to respond_to(:mf_inputs) }
   it { expect(target).to respond_to(:mf_outputs) }
-  it { expect(target).to respond_to(:mf_layers) }
+  it { expect(target).to respond_to(:mf_parts) }
 
   it 'has inputs list' do
     expect(target.mf_inputs).to match({one: be_a(Class), two: be_a(Class)})
@@ -35,11 +35,11 @@ RSpec.describe MatureFactory do
   end
 
   it 'sets default base_class for a group' do
-    expect(target.one_layer_class.superclass).to eq CustomType
+    expect(target.one_part_class.superclass).to eq CustomType
   end
 
   it 'sets default init for a group' do
-    layer = target.new_one_layer_instance(3)
-    expect(layer.triple).to eq 9
+    part = target.new_one_part_instance(3)
+    expect(part.triple).to eq 9
   end
 end

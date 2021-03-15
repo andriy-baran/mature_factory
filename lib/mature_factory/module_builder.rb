@@ -25,6 +25,13 @@ module MatureFactory
         receiver.private_class_method :__mf_inheritance_reactivate_composites__
       end
 
+      def __mf_global_registry_id__
+        MatureFactory.global_registry_module_id(components_name,
+          base_class: default_base_class,
+          init: default_init
+        )
+      end
+
       def __mf_local_registry_name__(title = components_name)
         :"mf_#{title}"
       end

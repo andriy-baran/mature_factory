@@ -26,6 +26,10 @@ module MatureFactory
     end
   end
 
+  def self.global_registry_module_id(components_name, base_class: nil, init: nil)
+    "#{components_name}#{[base_class, init].hash}".to_sym
+  end
+
   def self.included(receiver)
     receiver.extend ClassMethods
   end
