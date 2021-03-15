@@ -1,5 +1,7 @@
 # MatureFactory
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/d85d974be42eb002abc5/maintainability)](https://codeclimate.com/github/andriy-baran/mature_factory/maintainability)
+
 It's common situation that you need quickly prototype small library or create a complex stub-object for your test, but you don't want to write primitive code samples or create a bunch of classes. This gem solves the problem
 
 ## Installation
