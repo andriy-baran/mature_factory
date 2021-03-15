@@ -16,12 +16,12 @@ module MatureFactory
   module ClassMethods
     def produces(*components_names, &block)
       components_names.each do |components_name|
-        include MatureFactory::Prototype[components_name]
+        include MatureFactory::Prototype.build(components_name)
       end
       groups = GroupDefinition.new
       groups.instance_eval(&block) if block_given?
       groups.definitions.each do |components_name, attrs|
-        include MatureFactory::Prototype[components_name, **attrs]
+        include MatureFactory::Prototype.build(components_name, attrs)
       end
     end
   end

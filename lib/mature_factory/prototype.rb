@@ -1,10 +1,7 @@
 module MatureFactory
   class Prototype
-    def self.[](components_name, base_class: nil, init: nil)
-      registry.resolve(components_name) do |mod|
-        mod.default_base_class = base_class if base_class
-        mod.default_init = init if init
-      end
+    def self.build(components_name, **attrs)
+      registry.resolve(components_name, attrs)
     end
 
     def self.registered_modules
@@ -12,8 +9,8 @@ module MatureFactory
     end
 
     def self.build_module
-      -> (components_name, &block) do
-        ModuleBuilder.call(components_name, &block)
+      -> (components_name, **attrs) do
+        ModuleBuilder.call(components_name, attrs)
       end
     end
 
